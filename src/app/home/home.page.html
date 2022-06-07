@@ -1,9 +1,15 @@
 <ion-content [fullscreen]="true">
 	<ion-header class="ion-no-border">
 		<ion-toolbar>
-			<ion-buttons slot="primary">
+			<ion-buttons slot="primary">				
 				<ion-button (click)="openModal()">
 					<ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+				</ion-button>
+			</ion-buttons>
+			<ion-buttons slot="secondary">
+				<ion-button color="danger" (click)="showArchived = !showArchived">
+					<ion-badge color="danger"> {{ getArchivedCount() }} </ion-badge>
+					<ion-icon slot="icon-only" name="filter-circle-outline"></ion-icon>
 				</ion-button>
 			</ion-buttons>
 			<ion-title> Counter </ion-title>
@@ -12,13 +18,19 @@
 
 	<ion-grid>
 		<ion-row>
-			<ion-card *ngFor="let counter of allCounters; let i = index">
+			<ion-card *ngFor="let counter of allCounters; let i = index" [ngStyle]="{'display' : counter.isArchived && !showArchived ? 'none' : 'block'}">
 				<ion-card-header>
 					<ion-card-subtitle> {{ counter.name }} </ion-card-subtitle>
 					<ion-card-title class="display-card-title"> {{ getDays(counter.startDate) }} </ion-card-title>
-					<ion-button color="danger" fill="outline" size="small" (click)="relapse(i)">
+
+					<ion-button *ngIf="!counter.isArchived" color="danger" fill="outline" size="small" (click)="presentAlertConfirm(i)">
 						<ion-icon slot="start" name="reload-outline"></ion-icon> Relapse
 					</ion-button>
+
+					<ion-button *ngIf="counter.isArchived" color="success" fill="outline" size="small" (click)="retrieveCounter(i)">
+						<ion-icon slot="start" name="arrow-undo-outline"></ion-icon> Restore
+					</ion-button>
+					
 				</ion-card-header>
 			</ion-card>
 		</ion-row>
