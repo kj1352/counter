@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 type ICounter = {
 	name: string;
-	startDate: Date;
+	startDate: string;
+	relapseCount: number;
 	isArchived?: boolean;
 };
 
@@ -20,7 +22,8 @@ export class HomePage {
 	allCounters: Array<ICounter> = [];
 
 	constructor(
-		public alertController: AlertController
+		public alertController: AlertController,
+		public toastController: ToastController
 	) {
 		this.allCounters = JSON.parse(localStorage.getItem('counter'));
 
@@ -38,22 +41,28 @@ export class HomePage {
 
 		this.newCounter = {
 			name: undefined,
-			startDate: new Date()
+			relapseCount: 0,
+			startDate: undefined
 		};
 	}
 
-	getDays(date: Date) {
+	getDays(date: string) {
 		return ((new Date().getTime() - new Date(date).getTime()) / (1000 * 3600 * 24)).toFixed();
 	}
 
 	addCounter() {
-		this.allCounters.push(this.newCounter);
-		localStorage.setItem('counter', JSON.stringify(this.allCounters));
-		this.showAddModal = false;
+		if (this.newCounter.name && this.newCounter.name.trim() && this.newCounter.startDate) {
+			this.allCounters.push(this.newCounter);
+			localStorage.setItem('counter', JSON.stringify(this.allCounters));
+			this.showAddModal = false;
+		} else {
+			this.presentToast('Missing input data');
+		}
 	}
 
 	relapse(index: number) {
-		this.allCounters[index].startDate = new Date();
+		this.allCounters[index].startDate = new Date().toString();
+		this.allCounters[index].relapseCount += 1;
 		localStorage.setItem('counter', JSON.stringify(this.allCounters));
 	}
 
@@ -67,7 +76,7 @@ export class HomePage {
 		localStorage.setItem('counter', JSON.stringify(this.allCounters));
 	}
 
-	async presentAlertConfirm(index: number) {
+	async presentAlertToConfirmRelapse(index: number) {
 		const alert = await this.alertController.create({
 			message: 'Would you like to Relapse or Delete?',
 			buttons: [
@@ -88,5 +97,16 @@ export class HomePage {
 		});
 
 		await alert.present();
+	}
+
+	async presentToast(message: string) {
+		const toast = await this.toastController.create({
+			header: 'Error!',
+			icon: 'bug-outline',
+			message,
+			color: 'danger',
+			duration: 3000
+		});
+		toast.present();
 	}
 }

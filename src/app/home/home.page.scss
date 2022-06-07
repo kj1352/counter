@@ -1,4 +1,11 @@
-.display-card-title {
+.display-card-header {
     text-align: center;
-    margin: 10px 0;
+
+    .display-card-title {
+        margin: 10px 0;
+    }
+}
+
+ion-card {
+    margin: 0;
 }

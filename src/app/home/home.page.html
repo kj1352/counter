@@ -14,25 +14,26 @@
 			</ion-buttons>
 			<ion-title> Counter </ion-title>
 		</ion-toolbar>
-	</ion-header>	
+	</ion-header>
 
 	<ion-grid>
 		<ion-row>
-			<ion-card *ngFor="let counter of allCounters; let i = index" [ngStyle]="{'display' : counter.isArchived && !showArchived ? 'none' : 'block'}">
-				<ion-card-header>
-					<ion-card-subtitle> {{ counter.name }} </ion-card-subtitle>
-					<ion-card-title class="display-card-title"> {{ getDays(counter.startDate) }} </ion-card-title>
-
-					<ion-button *ngIf="!counter.isArchived" color="danger" fill="outline" size="small" (click)="presentAlertConfirm(i)">
-						<ion-icon slot="start" name="reload-outline"></ion-icon> Relapse
-					</ion-button>
-
-					<ion-button *ngIf="counter.isArchived" color="success" fill="outline" size="small" (click)="retrieveCounter(i)">
-						<ion-icon slot="start" name="arrow-undo-outline"></ion-icon> Restore
-					</ion-button>
-					
-				</ion-card-header>
-			</ion-card>
+			<ion-col *ngFor="let counter of allCounters; let i = index" [ngStyle]="{'display' : counter.isArchived && !showArchived ? 'none' : 'block'}">
+				<ion-card>
+					<ion-card-header class="display-card-header">
+						<ion-card-subtitle class="display-card-subtitle"> {{ counter.name }} </ion-card-subtitle>
+						<ion-card-title class="display-card-title"> {{ getDays(counter.startDate) }} </ion-card-title>
+	
+						<ion-button *ngIf="!counter.isArchived" color="danger" fill="outline" size="small" (click)="presentAlertToConfirmRelapse(i)">
+							<ion-icon slot="start" name="reload-outline"></ion-icon> Relapse ({{ counter.relapseCount }})
+						</ion-button>
+	
+						<ion-button *ngIf="counter.isArchived" color="success" fill="outline" size="small" (click)="retrieveCounter(i)">
+							<ion-icon slot="start" name="arrow-undo-outline"></ion-icon> Restore
+						</ion-button>						
+					</ion-card-header>
+				</ion-card>
+			</ion-col>
 		</ion-row>
 	</ion-grid>
 
@@ -58,12 +59,14 @@
 						<ion-input placeholder="Enter Counter name" [(ngModel)]="newCounter.name"></ion-input>
 					</ion-card-subtitle>
 					<ion-card-title>
-						<ion-input placeholder="Count" type="date" [(ngModel)]="newCounter.startDate"></ion-input>
+						<ion-datetime [(ngModel)]="newCounter.startDate"></ion-datetime>
 					</ion-card-title>
-					<ion-button color="success" size="small" (click)="addCounter()">
+				</ion-card-header>
+				<ion-card-content>
+					<ion-button color="success" expand="block" (click)="addCounter()">
 						<ion-icon slot="start" name="checkmark-outline"></ion-icon> Done
 					</ion-button>
-				</ion-card-header>
+				</ion-card-content>
 			</ion-card>
 
 		  </ion-content>
